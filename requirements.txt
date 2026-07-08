@@ -1,0 +1,8 @@
+faiss-cpu
+langchain
+langchain-mistralai
+langchain-community
+pandas
+python-dotenv
+requests
+pytest

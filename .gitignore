@@ -1,0 +1,12 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+data/raw/
+data/processed/
+faiss_index/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
