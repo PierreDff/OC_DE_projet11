@@ -7,9 +7,19 @@ Périmètre du POC :
 
 Le filtrage est effectué côté serveur via le langage de requête ODSQL,
 ce qui évite de télécharger 1,2 million d'enregistrements pour en garder 3 600.
+
+Un manifeste de collecte (`collecte_manifest.json`) est écrit à côté des données
+brutes. Il fige la date de collecte et le seuil temporel évalué ce jour-là.
+
+Pourquoi c'est nécessaire : le seuil `now(years=-1)` est glissant. Un événement
+retenu aujourd'hui aura « plus d'un an » demain, alors qu'il reste dans le jeu
+figé. Le manifeste permet aux tests unitaires de vérifier le critère contre la
+*date de collecte* — un seuil fixe — plutôt que contre `datetime.now()`, qui
+ferait échouer le test avec le simple passage du temps, sans changement de code.
 """
 
 import json
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import requests
@@ -41,6 +51,7 @@ CHAMPS = [
 ]
 
 SORTIE = Path("data/raw/events_lille.json")
+MANIFESTE = Path("data/raw/collecte_manifest.json")
 
 
 def fetch_events() -> list[dict]:
@@ -54,6 +65,33 @@ def fetch_events() -> list[dict]:
     return reponse.json()
 
 
+def ecrire_manifeste(n_evenements: int) -> None:
+    """Écrit le manifeste de collecte à côté des données brutes.
+
+    Le seuil temporel est recalculé ici *en Python* pour être figé dans le
+    fichier. `now(years=-1)` est évalué côté serveur par l'API : on ne récupère
+    pas sa valeur dans la réponse. On la reconstruit donc à la date du jour, ce
+    qui correspond exactement au seuil que l'API vient d'appliquer.
+    """
+    aujourd_hui = date.today()
+    seuil = aujourd_hui - timedelta(days=365)
+
+    manifeste = {
+        "date_collecte": datetime.now().isoformat(timespec="seconds"),
+        "source": "OpenDataSoft Explore v2.1 — evenements-publics-openagenda",
+        "where": WHERE,
+        "champs": CHAMPS,
+        "seuil_temporel": seuil.isoformat(),
+        "seuil_note": "lastdate_end >= cette date (now(years=-1) au jour de la collecte)",
+        "n_evenements": n_evenements,
+    }
+    MANIFESTE.parent.mkdir(parents=True, exist_ok=True)
+    MANIFESTE.write_text(
+        json.dumps(manifeste, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
 def main() -> None:
     evenements = fetch_events()
 
@@ -62,9 +100,11 @@ def main() -> None:
         json.dumps(evenements, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    ecrire_manifeste(len(evenements))
 
     print(f"{len(evenements)} événements récupérés")
     print(f"Écrits dans {SORTIE}")
+    print(f"Manifeste de collecte écrit dans {MANIFESTE}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,119 @@
+{
+  "_meta": {
+    "description": "Jeu de test annoté pour l'évaluation du système RAG Puls-Events.",
+    "index_reference": "faiss_index construit le 2026-07-13 (voir manifest.json / collecte_manifest.json)",
+    "avertissement": "Les uids correspondent à des événements réellement présents dans l'index figé, vérifiés un par un contre le texte source lors de l'annotation.",
+    "typologies": {
+      "factuelle": "Un événement précis est la réponse. uids_attendus = 1 uid. Mesure : recall@k.",
+      "thematique": "Plusieurs événements valables. uids_attendus = les pertinents (bruit écarté). Mesure : pertinence + précision.",
+      "temporelle": "Réponse dépendant d'une date. Le POC ne filtre pas le temps : révèle cette limite.",
+      "piege": "Le succès est l'abstention. uids_attendus = []. Trois modes couverts : attribut absent (prix, PMR) et événement absent (baseball)."
+    },
+    "principes_annotation": [
+      "Le ground_truth vient de la donnée source, jamais de la réponse du système.",
+      "Le titre ment parfois, la description tranche : annoter contre le texte.",
+      "Le ground_truth hérite des flous de la source : ne jamais combler un vide.",
+      "Pour un piège d'attribut absent, la bonne réponse est 'information non disponible', jamais 'non' (une absence n'est pas une négation)."
+    ],
+    "repartition": {
+      "factuelle": 4,
+      "thematique": 3,
+      "temporelle": 2,
+      "piege": 3,
+      "total": 12
+    },
+    "notes_analyse": {
+      "theme_02_et_temp_02": "Croisent thème + date. Le système récupère sur le thème et ignore la date : recall faible attendu. Démonstration de la limite temporelle -> recherche hybride en MVP.",
+      "fact_04_et_piege_01": "Paire prix présent / prix absent. Démontre la distinction citer / déduire.",
+      "piege_01_02_03": "Trois modes d'abstention : attribut absent, attribut absent sur lieu, événement absent + contexte trompeur.",
+      "densite_thematique": "Certaines requêtes (visites patrimoine) ont >5 bonnes réponses : recall plafonné par k=5. Point d'analyse : k adaptatif en MVP."
+    }
+  },
+
+  "questions": [
+    {
+      "id": "fact_01",
+      "question": "Y a-t-il un concert de guitare classique à Lille ?",
+      "type": "factuelle",
+      "uids_attendus": ["99447463"],
+      "ground_truth": "Oui, l'association Cord'Accord propose un concert-lecture mêlant guitare classique et lectures, le samedi 13 juin à 15h à la Médiathèque de Lille Sud, à l'occasion de la fête de la musique."
+    },
+    {
+      "id": "fact_02",
+      "question": "Quand a eu lieu l'événement Naked Soft Men ?",
+      "type": "factuelle",
+      "uids_attendus": ["61292505", "70264573"],
+      "ground_truth": "Deux événements Naked Soft Men sont référencés : la Release Party #1 le vendredi 27 février à la Maison Folie Moulins, et un concert le samedi 20 juin à la Gare Saint Sauveur."
+    },
+    {
+      "id": "fact_03",
+      "question": "Où a lieu l'atelier sur le video mapping ?",
+      "type": "factuelle",
+      "uids_attendus": ["90987211"],
+      "ground_truth": "L'atelier de découverte du video mapping a lieu sur deux jours : le samedi 20 septembre à l'Hôtel de Ville de Lille, et le dimanche 21 septembre à l'église Sainte-Marie-Madeleine."
+    },
+    {
+      "id": "fact_04",
+      "question": "L'événement sur le video mapping le 21 septembre était-il payant ?",
+      "type": "factuelle",
+      "uids_attendus": ["90987211"],
+      "ground_truth": "Non, l'atelier de découverte du video mapping était gratuit."
+    },
+    {
+      "id": "theme_01",
+      "question": "Quelles expositions puis-je aller voir à Lille ?",
+      "type": "thematique",
+      "uids_attendus": ["38671365", "67308859", "72223675", "32981746", "54424764"],
+      "ground_truth": "Plusieurs expositions sont proposées à Lille, notamment « Traversées » et « Môm'Art » à la Gare Saint Sauveur, « l'univers de Mathias Friman » à la Médiathèque de Lille-Moulins, « Pour une poignée de degrés » à Sciences Po Lille, et « Grandeur Nature », une exposition pour enfants au Palais des Beaux-Arts."
+    },
+    {
+      "id": "theme_02",
+      "question": "Y a-t-il des concerts de rock à Lille en août 2026 ?",
+      "type": "thematique",
+      "uids_attendus": ["62488437", "68173907", "99490093"],
+      "ground_truth": "Oui, plusieurs concerts de rock ont lieu à Lille en août 2026, notamment « Back To The 80's ! » (21-22 août), « Tribute to OASIS » (28-29 août) et un hommage à l'album Harvest de Neil Young (30 août)."
+    },
+    {
+      "id": "theme_03",
+      "question": "Quels sont les concerts de metal à Lille ?",
+      "type": "thematique",
+      "uids_attendus": ["18135758", "99712613", "39762198", "68081033", "78793498", "42045519", "30035850", "34739436"],
+      "ground_truth": "Plusieurs concerts de metal sont proposés à Lille, notamment des soirées organisées par Cerbère Coryphée (Five The Hierophant + Sloth Temple, Vacuous + Bastard Mycosis, Barabbas + Dionysiaque), ainsi que des soirées mélangeant metal et d'autres genres (Soirée Bi-Goût metalcore vs drum & bass, Kick Your Brass, Alvar & Friends)."
+    },
+    {
+      "id": "temp_01",
+      "question": "Quels concerts ont lieu à Lille le 25 décembre 2025 ?",
+      "type": "temporelle",
+      "uids_attendus": [],
+      "ground_truth": "Aucun concert n'est référencé à Lille à cette date dans les événements disponibles."
+    },
+    {
+      "id": "temp_02",
+      "question": "Quels concerts ont lieu à Lille la semaine du 20 au 27 juillet 2026 ?",
+      "type": "temporelle",
+      "uids_attendus": ["61617990", "46111111", "66362716", "56045708", "48894654", "68480752", "4362758"],
+      "ground_truth": "Sept concerts touchent cette semaine : « Argan Soul DJ SET » (25 juillet), « Selektaz (Live) + DJ SET » (24-25 juillet), « Infamous Bal » (jusqu'au 25 juillet), « Les Estivales de la Treille » (4 juillet - 29 août, les samedis), « Tiger Rodeo » (26 juillet), « Omar Ek + Nao » (24 juillet) et « La Folie Continue #3 » (3 juillet - 2 août)."
+    },
+    {
+      "id": "piege_01",
+      "question": "Combien de temps dure le concert de Laurent Voulzy ?",
+      "type": "piege",
+      "uids_attendus": [],
+      "ground_truth": "[ta formulation]"
+    },
+    {
+      "id": "piege_02",
+      "question": "La rencontre avec Malika Aït Gherbi est-elle accessible aux personnes à mobilité réduite ?",
+      "type": "piege",
+      "uids_attendus": [],
+      "ground_truth": "L'information sur l'accessibilité PMR n'est pas précisée pour cet événement. Le système ne dispose pas de cette donnée et ne peut pas répondre."
+    },
+    {
+      "id": "piege_03",
+      "question": "Y a-t-il un match de baseball à Lille ?",
+      "type": "piege",
+      "uids_attendus": [],
+      "ground_truth": "Aucun match de baseball n'est référencé dans les événements disponibles."
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+{
+  "par_question": [
+    {
+      "id": "fact_01",
+      "type": "factuelle",
+      "question": "Y a-t-il un concert de guitare classique à Lille ?",
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "abstention": null,
+      "n_attendus": 1,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "99447463"
+      ],
+      "latence_totale_ms": 886.2,
+      "tokens_entree": 2658,
+      "tokens_sortie": 68
+    },
+    {
+      "id": "fact_02",
+      "type": "factuelle",
+      "question": "Quand a eu lieu l'événement Naked Soft Men ?",
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "abstention": null,
+      "n_attendus": 2,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "61292505",
+        "70264573"
+      ],
+      "latence_totale_ms": 771.0,
+      "tokens_entree": 2704,
+      "tokens_sortie": 57
+    },
+    {
+      "id": "fact_03",
+      "type": "factuelle",
+      "question": "Où a lieu l'atelier sur le video mapping ?",
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "abstention": null,
+      "n_attendus": 1,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "90987211"
+      ],
+      "latence_totale_ms": 862.5,
+      "tokens_entree": 2269,
+      "tokens_sortie": 79
+    },
+    {
+      "id": "fact_04",
+      "type": "factuelle",
+      "question": "L'événement sur le video mapping le 21 septembre était-il payant ?",
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "abstention": null,
+      "n_attendus": 1,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "90987211"
+      ],
+      "latence_totale_ms": 653.8,
+      "tokens_entree": 2444,
+      "tokens_sortie": 36
+    },
+    {
+      "id": "theme_01",
+      "type": "thematique",
+      "question": "Quelles expositions puis-je aller voir à Lille ?",
+      "recall_at_k": 0.6,
+      "precision_at_k": 0.6,
+      "abstention": null,
+      "n_attendus": 5,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "32981746",
+        "38671365",
+        "67308859"
+      ],
+      "latence_totale_ms": 1492.5,
+      "tokens_entree": 2680,
+      "tokens_sortie": 180
+    },
+    {
+      "id": "theme_02",
+      "type": "thematique",
+      "question": "Y a-t-il des concerts de rock à Lille en août 2026 ?",
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "abstention": null,
+      "n_attendus": 3,
+      "n_recuperes": 5,
+      "uids_trouves": [],
+      "latence_totale_ms": 683.4,
+      "tokens_entree": 2534,
+      "tokens_sortie": 15
+    },
+    {
+      "id": "theme_03",
+      "type": "thematique",
+      "question": "Quels sont les concerts de metal à Lille ?",
+      "recall_at_k": 0.125,
+      "precision_at_k": 0.2,
+      "abstention": null,
+      "n_attendus": 8,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "99712613"
+      ],
+      "latence_totale_ms": 1315.3,
+      "tokens_entree": 2657,
+      "tokens_sortie": 168
+    },
+    {
+      "id": "temp_01",
+      "type": "temporelle",
+      "question": "Quels concerts ont lieu à Lille le 25 décembre 2025 ?",
+      "recall_at_k": null,
+      "precision_at_k": null,
+      "abstention": true,
+      "n_attendus": 0,
+      "n_recuperes": 5,
+      "uids_trouves": [],
+      "latence_totale_ms": 440.5,
+      "tokens_entree": 2330,
+      "tokens_sortie": 15
+    },
+    {
+      "id": "temp_02",
+      "type": "temporelle",
+      "question": "Quels concerts ont lieu à Lille la semaine du 20 au 27 juillet 2026 ?",
+      "recall_at_k": 0.2857142857142857,
+      "precision_at_k": 0.4,
+      "abstention": null,
+      "n_attendus": 7,
+      "n_recuperes": 5,
+      "uids_trouves": [
+        "4362758",
+        "56045708"
+      ],
+      "latence_totale_ms": 1587.3,
+      "tokens_entree": 3014,
+      "tokens_sortie": 191
+    },
+    {
+      "id": "piege_01",
+      "type": "piege",
+      "question": "Combien de temps dure le concert de Laurent Voulzy ?",
+      "recall_at_k": null,
+      "precision_at_k": null,
+      "abstention": true,
+      "n_attendus": 0,
+      "n_recuperes": 5,
+      "uids_trouves": [],
+      "latence_totale_ms": 491.0,
+      "tokens_entree": 2459,
+      "tokens_sortie": 22
+    },
+    {
+      "id": "piege_02",
+      "type": "piege",
+      "question": "La rencontre avec Malika Aït Gherbi est-elle accessible aux personnes à mobilité réduite ?",
+      "recall_at_k": null,
+      "precision_at_k": null,
+      "abstention": true,
+      "n_attendus": 0,
+      "n_recuperes": 5,
+      "uids_trouves": [],
+      "latence_totale_ms": 428.4,
+      "tokens_entree": 2208,
+      "tokens_sortie": 15
+    },
+    {
+      "id": "piege_03",
+      "type": "piege",
+      "question": "Y a-t-il un match de baseball à Lille ?",
+      "recall_at_k": null,
+      "precision_at_k": null,
+      "abstention": true,
+      "n_attendus": 0,
+      "n_recuperes": 5,
+      "uids_trouves": [],
+      "latence_totale_ms": 442.2,
+      "tokens_entree": 1925,
+      "tokens_sortie": 15
+    }
+  ],
+  "par_type": {
+    "factuelle": {
+      "n_questions": 4,
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.25,
+      "taux_abstention": null
+    },
+    "thematique": {
+      "n_questions": 3,
+      "recall_at_k": 0.24166666666666667,
+      "precision_at_k": 0.26666666666666666,
+      "taux_abstention": null
+    },
+    "temporelle": {
+      "n_questions": 2,
+      "recall_at_k": 0.2857142857142857,
+      "precision_at_k": 0.4,
+      "taux_abstention": 1.0
+    },
+    "piege": {
+      "n_questions": 3,
+      "recall_at_k": null,
+      "precision_at_k": null,
+      "taux_abstention": 1.0
+    }
+  },
+  "juge": {
+    "methode": "LLM-as-judge (mistral-medium, implémentation directe)",
+    "par_question": {
+      "fact_01": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 3,
+          "soutenues": 3,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse est précise, pertinente et fournit toutes les informations demandées."
+        }
+      },
+      "fact_02": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 2,
+          "soutenues": 2,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse fournit la date exacte de l'événement demandé et mentionne un autre concert à venir."
+        }
+      },
+      "fact_03": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 4,
+          "soutenues": 4,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse fournit clairement les lieux et les dates de l'atelier."
+        }
+      },
+      "fact_04": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse est précise, concise et répond directement à la question en indiquant que l'événement était gratuit."
+        }
+      },
+      "theme_01": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 4,
+          "soutenues": 4,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse liste plusieurs expositions à Lille avec des détails précis et des dates, répondant parfaitement à la question."
+        }
+      },
+      "theme_02": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse est honnête et concise, indiquant clairement qu'elle ne dispose pas des informations demandées."
+        }
+      },
+      "theme_03": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8,
+        "faith_detail": {
+          "total": 4,
+          "soutenues": 4,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 0.8,
+          "justification": "La réponse aborde le sujet mais inclut un concert non-metal, ce qui est partiellement hors-sujet."
+        }
+      },
+      "temp_01": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse est honnête et précise, indiquant qu'elle ne dispose pas des informations demandées."
+        }
+      },
+      "temp_02": {
+        "faithfulness": 0.833,
+        "answer_relevancy": 0.7,
+        "faith_detail": {
+          "total": 6,
+          "soutenues": 5,
+          "score": 0.833
+        },
+        "relev_detail": {
+          "score": 0.7,
+          "justification": "La réponse aborde le sujet mais inclut des dates hors de la semaine demandée (1er août) et ne précise pas si elle a vérifié l'exhaustivité des concerts."
+        }
+      },
+      "piege_01": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse est honnête et précise en indiquant qu'elle ne dispose pas de l'information demandée."
+        }
+      },
+      "piege_02": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 0.7,
+          "justification": "La réponse indique honnêtement qu'elle ne dispose pas de l'information demandée, mais ne précise pas si elle a cherché ou non."
+        }
+      },
+      "piege_03": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 1,
+          "soutenues": 1,
+          "score": 1.0
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse indique honnêtement qu'elle ne dispose pas de l'information demandée."
+        }
+      }
+    },
+    "moyennes": {
+      "faithfulness": 0.9860833333333333,
+      "answer_relevancy": 0.9333333333333332
+    }
+  }
+}

@@ -1,9 +1,10 @@
 faiss-cpu
 langchain
 langchain-mistralai
-langchain-community
+langchain-community==0.4.2
 pandas
 python-dotenv
 requests
 pytest
 beautifulsoup4
+numpy
