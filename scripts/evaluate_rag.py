@@ -10,11 +10,13 @@ calcule trois familles de métriques :
    dispose pas de l'information ? Aucun appel réseau.
 
 3. **Génération** (optionnel, ``--avec-juge``) — ``faithfulness`` et
-   ``answer_relevancy`` via un LLM juge (``mistral-medium``). Implémenté
+   ``answer_relevancy`` via un LLM juge (``mistral-small-2506``). Implémenté
    directement plutôt que délégué à RAGAS, pour éviter un conflit de
    dépendances avec ``langchain-community`` 0.4.2 (requise par FAISS).
    Le principe est identique : le juge évalue chaque réponse contre le
-   contexte et la question.
+   contexte et la question. NB : au POC, le juge utilise le même modèle que
+   le générateur ; un juge plus capable (mistral-medium/large) est recommandé
+   en production pour ne pas hériter des angles morts du générateur.
 
 Usage :
     python scripts/evaluate_rag.py
@@ -43,18 +45,19 @@ RESULTATS = ROOT / "data" / "eval" / "eval_results.json"
 PAUSE_ENTRE_APPELS = 3.0
 """Pause en secondes entre deux appels au LLM juge.
 
-mistral-medium-2505 autorise 0,42 req/s (~1 req/2,4 s). On prend une marge pour
-éviter tout 429 (rate limit). Sur 24 appels (2 par question × 12), ça ajoute ~72 s
-au total — acceptable pour un POC.
+On prend une marge pour éviter tout 429 (rate limit). Sur 24 appels (2 par
+question × 12), ça ajoute ~72 s au total — acceptable pour un POC.
 """
 
 MODELE_JUGE = "mistral-small-2506"
 """Modèle utilisé pour juger les réponses.
 
-Choisi un cran au-dessus du générateur (``mistral-small``) : un juge de même
-capacité que le modèle évalué hériterait de ses angles morts. ``mistral-large``
-serait encore meilleur, mais son débit autorisé (0,07 req/s) rendrait
-l'évaluation impraticable.
+Au POC, le juge utilise le **même modèle que le générateur** (``mistral-small-2506``),
+par simplicité de mise en œuvre. Limite assumée : un juge de même capacité que le
+modèle évalué peut hériter de ses angles morts, ce qui borne la portée des scores de
+faithfulness et d'answer_relevancy. En production, un juge plus capable
+(``mistral-medium`` ou ``mistral-large``) serait préférable ; son débit d'appel plus
+restreint doit alors être pris en compte.
 """
 
 MARQUEURS_ABSTENTION = [
@@ -71,7 +74,7 @@ MARQUEURS_ABSTENTION = [
 ]
 
 PAUSE_ENTRE_APPELS = 2.5
-"""Pause entre deux appels au juge (mistral-medium à 0,42 req/s ≈ 1 req / 2,4 s)."""
+"""Pause entre deux appels au juge, marge pour éviter tout 429 (rate limit)."""
 
 
 # --------------------------------------------------------------------------- #
@@ -222,8 +225,9 @@ def evaluer_avec_juge(reponses: list[dict]) -> dict | None:
       contexte fourni ? (détecte les hallucinations)
     - answer_relevancy : la réponse répond-elle bien à la question posée ?
 
-    Le juge est un modèle plus capable que le générateur (mistral-medium vs
-    mistral-small), pour ne pas hériter de ses angles morts.
+    Au POC, le juge utilise le même modèle que le générateur (mistral-small-2506) ;
+    un juge plus capable est recommandé en production pour ne pas hériter de ses
+    angles morts.
     """
     try:
         from langchain_mistralai import ChatMistralAI
@@ -284,7 +288,7 @@ def evaluer_avec_juge(reponses: list[dict]) -> dict | None:
         moyennes["answer_relevancy"] = sum(relevancy_scores) / len(relevancy_scores)
 
     return {
-        "methode": "LLM-as-judge (mistral-medium, implémentation directe)",
+        "methode": "LLM-as-judge (mistral-small-2506, implémentation directe)",
         "par_question": scores_par_question,
         "moyennes": moyennes,
     }

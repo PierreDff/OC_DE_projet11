@@ -12,9 +12,9 @@
       "uids_trouves": [
         "99447463"
       ],
-      "latence_totale_ms": 886.2,
-      "tokens_entree": 2658,
-      "tokens_sortie": 68
+      "latence_totale_ms": 1120.3,
+      "tokens_entree": 2879,
+      "tokens_sortie": 53
     },
     {
       "id": "fact_02",
@@ -29,9 +29,9 @@
         "61292505",
         "70264573"
       ],
-      "latence_totale_ms": 771.0,
-      "tokens_entree": 2704,
-      "tokens_sortie": 57
+      "latence_totale_ms": 925.6,
+      "tokens_entree": 2925,
+      "tokens_sortie": 65
     },
     {
       "id": "fact_03",
@@ -45,9 +45,9 @@
       "uids_trouves": [
         "90987211"
       ],
-      "latence_totale_ms": 862.5,
-      "tokens_entree": 2269,
-      "tokens_sortie": 79
+      "latence_totale_ms": 921.5,
+      "tokens_entree": 2490,
+      "tokens_sortie": 59
     },
     {
       "id": "fact_04",
@@ -61,9 +61,9 @@
       "uids_trouves": [
         "90987211"
       ],
-      "latence_totale_ms": 653.8,
-      "tokens_entree": 2444,
-      "tokens_sortie": 36
+      "latence_totale_ms": 828.4,
+      "tokens_entree": 2665,
+      "tokens_sortie": 40
     },
     {
       "id": "theme_01",
@@ -79,9 +79,9 @@
         "38671365",
         "67308859"
       ],
-      "latence_totale_ms": 1492.5,
-      "tokens_entree": 2680,
-      "tokens_sortie": 180
+      "latence_totale_ms": 2259.2,
+      "tokens_entree": 2901,
+      "tokens_sortie": 259
     },
     {
       "id": "theme_02",
@@ -93,8 +93,8 @@
       "n_attendus": 3,
       "n_recuperes": 5,
       "uids_trouves": [],
-      "latence_totale_ms": 683.4,
-      "tokens_entree": 2534,
+      "latence_totale_ms": 1439.5,
+      "tokens_entree": 2755,
       "tokens_sortie": 15
     },
     {
@@ -109,9 +109,9 @@
       "uids_trouves": [
         "99712613"
       ],
-      "latence_totale_ms": 1315.3,
-      "tokens_entree": 2657,
-      "tokens_sortie": 168
+      "latence_totale_ms": 1239.9,
+      "tokens_entree": 2878,
+      "tokens_sortie": 77
     },
     {
       "id": "temp_01",
@@ -123,9 +123,9 @@
       "n_attendus": 0,
       "n_recuperes": 5,
       "uids_trouves": [],
-      "latence_totale_ms": 440.5,
-      "tokens_entree": 2330,
-      "tokens_sortie": 15
+      "latence_totale_ms": 614.4,
+      "tokens_entree": 2551,
+      "tokens_sortie": 29
     },
     {
       "id": "temp_02",
@@ -140,9 +140,9 @@
         "4362758",
         "56045708"
       ],
-      "latence_totale_ms": 1587.3,
-      "tokens_entree": 3014,
-      "tokens_sortie": 191
+      "latence_totale_ms": 2152.6,
+      "tokens_entree": 3235,
+      "tokens_sortie": 290
     },
     {
       "id": "piege_01",
@@ -154,8 +154,8 @@
       "n_attendus": 0,
       "n_recuperes": 5,
       "uids_trouves": [],
-      "latence_totale_ms": 491.0,
-      "tokens_entree": 2459,
+      "latence_totale_ms": 1026.0,
+      "tokens_entree": 2680,
       "tokens_sortie": 22
     },
     {
@@ -168,8 +168,8 @@
       "n_attendus": 0,
       "n_recuperes": 5,
       "uids_trouves": [],
-      "latence_totale_ms": 428.4,
-      "tokens_entree": 2208,
+      "latence_totale_ms": 1024.9,
+      "tokens_entree": 2429,
       "tokens_sortie": 15
     },
     {
@@ -182,8 +182,8 @@
       "n_attendus": 0,
       "n_recuperes": 5,
       "uids_trouves": [],
-      "latence_totale_ms": 442.2,
-      "tokens_entree": 1925,
+      "latence_totale_ms": 976.1,
+      "tokens_entree": 2146,
       "tokens_sortie": 15
     }
   ],
@@ -214,7 +214,7 @@
     }
   },
   "juge": {
-    "methode": "LLM-as-judge (mistral-medium, implémentation directe)",
+    "methode": "LLM-as-judge (mistral-small-2506, implémentation directe)",
     "par_question": {
       "fact_01": {
         "faithfulness": 1.0,
@@ -226,10 +226,23 @@
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse est précise, pertinente et fournit toutes les informations demandées."
+          "justification": "La réponse est précise, concise et fournit toutes les informations demandées."
         }
       },
       "fact_02": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 1.0,
+        "faith_detail": {
+          "total": 4,
+          "soutenues": 2,
+          "score": 0.5
+        },
+        "relev_detail": {
+          "score": 1.0,
+          "justification": "La réponse fournit les dates exactes et les lieux des événements demandés."
+        }
+      },
+      "fact_03": {
         "faithfulness": 1.0,
         "answer_relevancy": 1.0,
         "faith_detail": {
@@ -239,20 +252,7 @@
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse fournit la date exacte de l'événement demandé et mentionne un autre concert à venir."
-        }
-      },
-      "fact_03": {
-        "faithfulness": 1.0,
-        "answer_relevancy": 1.0,
-        "faith_detail": {
-          "total": 4,
-          "soutenues": 4,
-          "score": 1.0
-        },
-        "relev_detail": {
-          "score": 1.0,
-          "justification": "La réponse fournit clairement les lieux et les dates de l'atelier."
+          "justification": "La réponse fournit clairement les lieux et dates de l'atelier, répondant précisément à la question."
         }
       },
       "fact_04": {
@@ -265,46 +265,46 @@
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse est précise, concise et répond directement à la question en indiquant que l'événement était gratuit."
+          "justification": "La réponse aborde le sujet, fournit l'information demandée (gratuit) et est concise."
         }
       },
       "theme_01": {
-        "faithfulness": 1.0,
+        "faithfulness": 0.833,
         "answer_relevancy": 1.0,
         "faith_detail": {
-          "total": 4,
-          "soutenues": 4,
-          "score": 1.0
+          "total": 6,
+          "soutenues": 5,
+          "score": 0.833
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse liste plusieurs expositions à Lille avec des détails précis et des dates, répondant parfaitement à la question."
+          "justification": "La réponse liste plusieurs expositions actuelles et futures à Lille, répondant précisément à la question."
         }
       },
       "theme_02": {
         "faithfulness": 1.0,
-        "answer_relevancy": 1.0,
+        "answer_relevancy": 0.8,
         "faith_detail": {
           "total": 1,
           "soutenues": 1,
           "score": 1.0
         },
         "relev_detail": {
-          "score": 1.0,
-          "justification": "La réponse est honnête et concise, indiquant clairement qu'elle ne dispose pas des informations demandées."
+          "score": 0.8,
+          "justification": "La réponse est honnête et concise, mais ne fournit pas d'information utile."
         }
       },
       "theme_03": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "faith_detail": {
-          "total": 4,
-          "soutenues": 4,
+          "total": 3,
+          "soutenues": 3,
           "score": 1.0
         },
         "relev_detail": {
-          "score": 0.8,
-          "justification": "La réponse aborde le sujet mais inclut un concert non-metal, ce qui est partiellement hors-sujet."
+          "score": 1.0,
+          "justification": "La réponse est précise, pertinente et fournit une information utile sur un concert de metal à Lille."
         }
       },
       "temp_01": {
@@ -317,20 +317,20 @@
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse est honnête et précise, indiquant qu'elle ne dispose pas des informations demandées."
+          "justification": "La réponse est honnête, concise et pertinente en indiquant l'absence d'information."
         }
       },
       "temp_02": {
-        "faithfulness": 0.833,
-        "answer_relevancy": 0.7,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5,
         "faith_detail": {
-          "total": 6,
-          "soutenues": 5,
-          "score": 0.833
+          "total": 7,
+          "soutenues": 7,
+          "score": 1.0
         },
         "relev_detail": {
-          "score": 0.7,
-          "justification": "La réponse aborde le sujet mais inclut des dates hors de la semaine demandée (1er août) et ne précise pas si elle a vérifié l'exhaustivité des concerts."
+          "score": 0.5,
+          "justification": "La réponse mentionne des concerts mais certains sont hors de la période demandée (ex. 11 et 18 juillet)."
         }
       },
       "piege_01": {
@@ -348,15 +348,15 @@
       },
       "piege_02": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.7,
+        "answer_relevancy": 0.8,
         "faith_detail": {
           "total": 1,
           "soutenues": 1,
           "score": 1.0
         },
         "relev_detail": {
-          "score": 0.7,
-          "justification": "La réponse indique honnêtement qu'elle ne dispose pas de l'information demandée, mais ne précise pas si elle a cherché ou non."
+          "score": 0.8,
+          "justification": "La réponse indique honnêtement qu'elle ne dispose pas de l'information demandée."
         }
       },
       "piege_03": {
@@ -369,13 +369,13 @@
         },
         "relev_detail": {
           "score": 1.0,
-          "justification": "La réponse indique honnêtement qu'elle ne dispose pas de l'information demandée."
+          "justification": "La réponse est concise, honnête et pertinente."
         }
       }
     },
     "moyennes": {
-      "faithfulness": 0.9860833333333333,
-      "answer_relevancy": 0.9333333333333332
+      "faithfulness": 0.9444166666666667,
+      "answer_relevancy": 0.9250000000000002
     }
   }
 }

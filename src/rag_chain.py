@@ -27,6 +27,7 @@ Usage :
 
 from __future__ import annotations
 
+import datetime
 import time
 from dataclasses import dataclass, field
 
@@ -66,12 +67,41 @@ l'abstention cherche à empêcher.
 
 
 # --------------------------------------------------------------------------- #
+# Ancrage temporel
+# --------------------------------------------------------------------------- #
+
+JOURS_FR = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+MOIS_FR = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+]
+
+
+def date_du_jour_fr(date: datetime.date | None = None) -> str:
+    """Formate une date en français, sans dépendre de la locale système.
+
+    La locale (``locale.setlocale``) n'est pas fiable d'une machine à l'autre —
+    notamment sous Windows, où le paquet linguistique n'est pas garanti
+    installé. Une table statique suffit ici et évite la dépendance.
+
+    Le paramètre ``date`` est injectable (au lieu d'appeler
+    ``datetime.date.today()`` en dur dans le corps) : permet de tester la
+    fonction avec une date fixe, sur le même principe que le filtre
+    ``now(years=-1)`` de la collecte, jamais figé dans le code lui-même.
+    """
+    date = date or datetime.date.today()
+    return f"{JOURS_FR[date.weekday()]} {date.day} {MOIS_FR[date.month - 1]} {date.year}"
+
+
+# --------------------------------------------------------------------------- #
 # Prompt système
 # --------------------------------------------------------------------------- #
 
 PROMPT_SYSTEME = """\
 Tu es l'assistant de recommandation culturelle de Puls-Events, pour des \
 événements à Lille.
+
+Nous sommes aujourd'hui le {date_du_jour}.
 
 ═══════════════════════════════════════════════════════════════════
 RÈGLE ABSOLUE, PRIORITAIRE SUR TOUTE AUTRE : NE JAMAIS INVENTER.
@@ -90,6 +120,17 @@ dans le CONTEXTE.
 - DATE → rapporte-la exactement comme elle est écrite. N'AJOUTE PAS une année, \
   un jour ou une heure absents. Si le texte dit « vendredi 5 juin » sans année, \
   tu écris « vendredi 5 juin » — pas « 5 juin 2026 ».
+- PÉRIODE DEMANDÉE (relative — « ce week-end », « cette semaine », « demain »… \
+  — OU explicite — « la semaine du 20 au 27 juillet », « en août 2026 »…) → \
+  compare TOUJOURS la date de chaque événement à la période demandée : à la \
+  date du jour indiquée plus haut si la période est relative, à la plage \
+  donnée par l'utilisateur si elle est explicite. Un événement qui propose \
+  PLUSIEURS occurrences (dates répétées, série, festival sur plusieurs \
+  semaines) doit être filtré occurrence par occurrence : ne cite QUE les \
+  dates qui tombent réellement dans la période demandée, même si d'autres \
+  dates du même événement figurent dans le CONTEXTE. Si aucune date ne \
+  correspond, dis-le clairement plutôt que de citer un événement ou une \
+  occurrence hors période, même s'il porte sur le bon thème.
 - PRIX, GRATUITÉ, RÉSERVATION → il n'existe aucun champ prix structuré, donc tu \
   ne CALCULES ni ne DEVINES jamais un tarif. MAIS si la description d'un \
   événement mentionne explicitement une information tarifaire — « gratuit », \
@@ -203,20 +244,31 @@ def construire_contexte(recuperation: Recuperation) -> str:
     return "\n\n".join(blocs)
 
 
-def construire_messages(question: str, contexte: str) -> list[tuple[str, str]]:
+def construire_messages(
+    question: str,
+    contexte: str,
+    date: datetime.date | None = None,
+) -> list[tuple[str, str]]:
     """Assemble les messages envoyés au modèle de chat.
 
     Le contexte est placé dans le message utilisateur, encadrant explicitement
     la question. Le prompt système, lui, porte les règles de comportement
-    (abstention, citation), invariantes d'une question à l'autre.
+    (abstention, citation, ancrage temporel), invariantes d'une question à
+    l'autre — à l'exception de la date du jour, interpolée à chaque appel.
+
+    Sans cette date, le modèle ne peut pas évaluer si un événement correspond
+    à une période relative (« ce week-end », « cette semaine ») : il ne connaît
+    que le texte du CONTEXTE, jamais la date d'exécution. ``date`` est
+    injectable pour les tests ; ``None`` retombe sur la date du jour réelle.
     """
     message_utilisateur = (
         f"CONTEXTE — événements disponibles :\n\n{contexte}\n\n"
         f"---\n\n"
         f"QUESTION de l'utilisateur : {question}"
     )
+    prompt_systeme = PROMPT_SYSTEME.format(date_du_jour=date_du_jour_fr(date))
     return [
-        ("system", PROMPT_SYSTEME),
+        ("system", prompt_systeme),
         ("human", message_utilisateur),
     ]
 

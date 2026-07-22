@@ -230,7 +230,7 @@ La réponse est encapsulée dans une `ReponseRAG` qui porte le texte, les
 ne circule jamais sans sa traçabilité.
 
 **Prompt d'abstention.** Le système ne doit jamais inventer. Le prompt a été
-durci en trois itérations après observation de hallucinations concrètes :
+durci en cinq itérations après observation de hallucinations concrètes :
 
 1. **V1** (naïve) : « ne jamais inventer » — le modèle a répondu « l'entrée est
    gratuite sur réservation » alors que l'information n'existait pas, et a
@@ -238,9 +238,29 @@ durci en trois itérations après observation de hallucinations concrètes :
 2. **V2** : interdiction en tête, fusion nommément interdite, prix interdit en
    bloc — le « gratuite » disparaît, mais le prix est alors interdit même quand
    il est explicitement écrit dans la source.
-3. **V3** (finale) : distinction **citer / déduire**. Le modèle peut rapporter
-   une gratuité explicitement écrite ; il ne peut pas la déduire quand elle
+3. **V3** : distinction **citer / déduire**. Le modèle peut rapporter une
+   gratuité explicitement écrite ; il ne peut pas la déduire quand elle
    manque. Dates reportées telles qu'écrites, sans année ajoutée.
+4. **V4** (ancrage temporel) : découvert en démo — sur une question du type
+   « un concert de jazz ce week-end ? », le modèle citait un événement antérieur
+   de plusieurs semaines comme s'il correspondait à la période demandée. Cause :
+   la date du jour n'était jamais transmise au modèle, qui ne pouvait donc pas
+   évaluer une période relative. Correctif : `date_du_jour_fr()` calcule la date
+   courante (sans dépendance à la locale système) et `construire_messages()`
+   l'interpole dans le prompt système à chaque appel, avec une consigne de
+   vérification avant citation.
+5. **V5** (filtrage par occurrence, effet partiel) : le test sur `temp_02` (« la
+   semaine du 20 au 27 juillet 2026 ») a montré que V4 ne suffisait pas pour une
+   période **explicite** donnée dans la question (V4 ne comparait qu'à la date
+   du jour, utile seulement pour le relatif). Le modèle citait aussi des
+   occurrences du 11 et du 18 juillet d'un même événement récurrent (« Les
+   Estivales de la Treille ») comme si elles tombaient « cette semaine ».
+   Correctif : la consigne couvre désormais les deux cas (relatif ET explicite)
+   et impose un filtrage **occurrence par occurrence** pour les événements à
+   dates multiples, pas seulement événement par événement.
+   **Ce correctif agit sur la génération (ne plus *citer à tort* une date hors
+   période), pas sur la récupération** — voir la limite « Pas de filtrage
+   temporel » ci-dessous, qui reste entière et relève du MVP.
 
 ### 7. Évaluation
 
@@ -436,6 +456,12 @@ de rock ramenés (juin, octobre, novembre, février) — aucun d'août. Le syst�
 capte le thème et ignore la date. La recherche est purement sémantique ; le
 filtrage par métadonnées temporelles est la recommandation principale pour le MVP.
 
+Le prompt (V4/V5, voir Chaîne RAG) agit uniquement sur la génération, pas sur ce
+chiffre : `recall@k` et `precision@k` mesurent les documents que FAISS a remontés,
+inchangés après le patch — confirmé en régénérant les réponses (`temp_02` :
+recall 0,29 avant et après). Ce qui change, c'est la fidélité du texte produit à
+partir de ces documents, invisible dans ces deux métriques.
+
 ### Limites identifiées
 
 **Pas de filtrage temporel.** La recherche est purement sémantique. « Août 2026 »
@@ -451,9 +477,45 @@ d'arts plastiques pour enfants), champs vides (`keywords_fr` à 34 %),
 incohérences internes (jeudi/vendredi sur un même événement). Inhérent au
 crowdsourcing Open Agenda.
 
-**Date du jour absente du prompt.** Le modèle ne sait pas si un événement est passé
-ou à venir. Correctif simple (injection de la date dans le prompt), identifié mais
-non implémenté dans le POC.
+**Date du jour absente du prompt — corrigé (V4, voir Chaîne RAG).** Le modèle ne
+savait pas si un événement était passé ou à venir, et pouvait citer un événement
+hors période comme s'il y correspondait. La date du jour est désormais interpolée
+dans le prompt système à chaque appel. **Ce correctif ne résout pas la limite
+« Pas de filtrage temporel »** (la récupération elle-même reste purement
+sémantique) : il évite seulement qu'un événement à date unique, mal daté par
+rapport à la question, soit présenté comme pertinent une fois récupéré. Vérifié
+sur des événements à date unique (cas du live-demo, « un concert de jazz ce
+week-end ») : re-testé en direct le 22 juillet 2026, abstention correcte sans
+date précisée dans la question, puis citation exacte des deux concerts du
+week-end (24 et 25 juillet) une fois la date confirmée — sans aucune date hors
+période dans les deux cas.
+
+**Filtrage par occurrence — tenté (V5), non résolu par le prompt.** Certains
+événements récurrents (ex. « Les Estivales de la Treille », un seul chunk listant
+plusieurs dates de programme en texte libre : 11, 18, 25 juillet…) exigent un
+filtrage *à l'intérieur* d'un même document, pas seulement entre événements. La
+consigne V5 (comparer chaque occurrence à la période demandée) a été testée sur
+`temp_02` : le modèle a cessé d'affirmer explicitement que les occurrences hors
+période tombaient "cette semaine", mais continue de les citer sans les exclure.
+Conclusion : `mistral-small-2506` ne réalise pas de façon fiable ce filtrage fin
+par consigne seule. Le vrai correctif est structurel, pas un prompt — découper
+les événements récurrents en un chunk par occurrence à l'indexation
+(`src/vectorize.py`), pour ramener le problème à un filtrage entre documents
+distincts. C'est un chantier de la recommandation MVP « filtrage par métadonnées
+temporelles », pas un correctif POC.
+
+**Sensibilité de la récupération à la formulation exacte de la requête.**
+Constaté en direct le 22 juillet 2026 : « y a-t-il un concert de jazz ce
+week-end » (abstention totale, aucun événement du week-end dans le contexte
+récupéré) contre « nous sommes le 22 juillet 2026, y a-t-il un concert de jazz
+ce week-end ? » (les deux concerts du week-end correctement cités) — la seule
+différence est l'ajout de la date dans le texte de la question, qui modifie le
+vecteur d'embedding et donc les documents remontés par FAISS. Aucune des deux
+réponses n'est fausse (abstention légitime dans un cas, citation exacte dans
+l'autre), mais le résultat dépend de la formulation, pas seulement du contenu
+de la question — propriété connue de la recherche par similarité sémantique,
+de la même famille que « Pas de filtrage temporel » ci-dessus : la recherche
+capte des signaux textuels, pas des critères structurés.
 
 **Recall thématique non mesurable exhaustivement.** 275 expositions dans le corpus :
 impossible d'annoter exhaustivement. Le recall@k sur les thématiques denses est un
@@ -626,8 +688,15 @@ machines, ce que FAISS ne permet pas.
 - [x] **Étape 4** — Chaîne RAG
   - [x] Module de récupération partagé (`src/retriever.py`) avec instrumentation
   - [x] Chaîne RAG explicite (`src/rag_chain.py`) — récupération → contexte → génération
-  - [x] Prompt d'abstention en 3 itérations (V1 naïve → V2 stricte → V3 citer/déduire)
+  - [x] Prompt d'abstention en 5 itérations (V1 naïve → V2 stricte → V3 citer/déduire → V4 ancrage temporel → V5 filtrage par occurrence)
   - [x] Dataclasses `Recuperation` et `ReponseRAG` avec métriques embarquées
+  - [x] Re-génération (`generate_answers.py`) et ré-évaluation après V4 : recall@k, precision@k et abstention
+        inchangés (attendu — métriques de récupération, non de génération), mais régression qualitative repérée
+        sur `temp_02` (occurrences hors période citées) → a motivé V5
+  - [x] Re-test qualitatif de `temp_02` après V5 : amélioration partielle (le modèle n'affirme plus que les
+        occurrences du 11/18 juillet tombent "cette semaine") mais elles restent citées sans être exclues —
+        limite du prompt engineering sur `mistral-small-2506` pour ce cas, documentée comme recommandation MVP
+        (chunking par occurrence, voir Limites identifiées)
 - [x] **Évaluation**
   - [x] Jeu de test annoté (12 questions, 4 typologies : factuelle, thématique, temporelle, piège)
   - [x] Script de génération des réponses (`generate_answers.py`) — découplé
